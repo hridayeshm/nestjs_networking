@@ -1,0 +1,162 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Comment {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input CreateCommentInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input CreateEventInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input CreateFollowInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input CreateLikeInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input CreatePostInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input CreateTokenInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+type Event {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+type Follow {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+type Like {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+type Mutation {
+  createComment(createCommentInput: CreateCommentInput!): Comment!
+  createEvent(createEventInput: CreateEventInput!): Event!
+  createFollow(createFollowInput: CreateFollowInput!): Follow!
+  createLike(createLikeInput: CreateLikeInput!): Like!
+  createPost(createPostInput: CreatePostInput!): Post!
+  createToken(createTokenInput: CreateTokenInput!): Token!
+  registerUser(registerUserInput: RegisterUserInput!): UserType!
+  removeComment(id: Int!): Comment!
+  removeEvent(id: Int!): Event!
+  removeFollow(id: Int!): Follow!
+  removeLike(id: Int!): Like!
+  removePost(id: Int!): Post!
+  removeToken(id: Int!): Token!
+  removeUser(id: Int!): UserType!
+  updateComment(updateCommentInput: UpdateCommentInput!): Comment!
+  updateEvent(updateEventInput: UpdateEventInput!): Event!
+  updateFollow(updateFollowInput: UpdateFollowInput!): Follow!
+  updateLike(updateLikeInput: UpdateLikeInput!): Like!
+  updatePost(updatePostInput: UpdatePostInput!): Post!
+  updateToken(updateTokenInput: UpdateTokenInput!): Token!
+  updateUser(updateUserInput: UpdateUserInput!): UserType!
+}
+
+type Post {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+type Query {
+  comment(id: Int!): Comment!
+  event(id: Int!): Event!
+  follow(id: Int!): Follow!
+  like(id: Int!): Like!
+  post(id: Int!): Post!
+  token(id: Int!): Token!
+  user(id: Int!): UserType!
+}
+
+input RegisterUserInput {
+  email: String!
+  password: String!
+  username: String!
+}
+
+type Token {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateCommentInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input UpdateEventInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input UpdateFollowInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input UpdateLikeInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input UpdatePostInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input UpdateTokenInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input UpdateUserInput {
+  email: String
+  id: Int!
+  password: String
+  username: String
+}
+
+enum UserRole {
+  Active
+  Blocked
+  Inactive
+}
+
+type UserType {
+  _id: String!
+  email: String!
+  emailVerificationToken: String!
+  followees: [ID!]!
+  followers: [ID!]!
+  status: UserRole!
+  username: String!
+}
