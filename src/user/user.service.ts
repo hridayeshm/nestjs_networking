@@ -41,7 +41,8 @@ export class UserService {
         "user not activated. please check mail for verification or contact administrator"
       );
     }
-    return user; 
+    return user;  
+    
   }
   
   findAll() {
