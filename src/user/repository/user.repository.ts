@@ -4,7 +4,8 @@ import { Model } from 'mongoose';
 import { User, UserDocument } from '../schema/user.schema';
 import { UserType } from '../entities/user.entity';
 import { UserStatus } from '../enums/user-status.enum';
-import bcrypt from 'bcrypt'
+import * as bcrypt from 'bcrypt'
+import { RegisterUserWithUUID } from '../dto/register-user.input';
 
 @Injectable()
 export class UserRepository {
@@ -12,7 +13,7 @@ export class UserRepository {
     @InjectModel(User.name) private readonly userModel: Model<User>,
   ) {}
 
-  async registerUser(registerUserWithUUID): Promise<User> {
+  async registerUser(registerUserWithUUID: RegisterUserWithUUID): Promise<User> {
     const registeredUser = new this.userModel(registerUserWithUUID);
     console.log(registeredUser);
     await registeredUser.save();
@@ -29,6 +30,7 @@ export class UserRepository {
       },
       { new: true },
     );
+    
     return verifiedUser;
   }
 
@@ -37,7 +39,15 @@ export class UserRepository {
     return user;
   }
 
-  async verifyPassword(loginPassword: string, dbPassword: string): Promise<Boolean> {
-    return await bcrypt.compare(loginPassword, dbPassword)
+  async verifyPassword(
+    loginPassword: string,
+    dbPassword: string,
+  ): Promise<Boolean> {
+    return await bcrypt.compare(loginPassword, dbPassword);
   }
+
+  async findById(id: string): Promise<User> {
+    return this.userModel.findOne({ _id: id});
+  }
+
 }

@@ -1,10 +1,9 @@
-import nodemailer, { Transporter } from 'nodemailer'
-
+import {Transporter, createTransport} from 'nodemailer'
 
 export class NodeMailerService{
-   public transporter: Transporter;
+   public transporter: Transporter
    constructor(){
-     this.transporter = nodemailer.createTransport({
+     this.transporter = createTransport({
        host: "sandbox.smtp.mailtrap.io",
        port: 2525,
        auth: {

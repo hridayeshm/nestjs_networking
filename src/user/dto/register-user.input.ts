@@ -16,3 +16,8 @@ export class RegisterUserInput {
     @MinLength(8, { message: 'Password must be at least 8 characters long' })
     password: string
 }
+
+export interface RegisterUserWithUUID extends RegisterUserInput {
+    emailVerificationToken: string
+}
+

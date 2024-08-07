@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
@@ -12,13 +13,21 @@ import { LikeModule } from './like/like.module';
 import { FollowModule } from './follow/follow.module';
 import { EventModule } from './event/event.module';
 import { TokenModule } from './token/token.module';
+import { AuthModule } from './auth/auth.module';
 
-
-const mongoURI = 'mongodb+srv://Networking:mongoatlas123@cluster0.3ufawdp.mongodb.net/Networking-api?retryWrites=true&w=majority&appName=Cluster0'
 
 @Module({
   imports: [
-    MongooseModule.forRoot(mongoURI, {}),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('MONGO_URI'),
+      }),
+      inject: [ConfigService],
+    }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
@@ -34,6 +43,7 @@ const mongoURI = 'mongodb+srv://Networking:mongoatlas123@cluster0.3ufawdp.mongod
     FollowModule,
     EventModule,
     TokenModule,
+    AuthModule,
     
   ],
 

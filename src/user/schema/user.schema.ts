@@ -4,6 +4,7 @@ import { UserStatus } from '../enums/user-status.enum';
 import {Document} from 'mongoose';
 import mongoose from 'mongoose';
 import { Field } from '@nestjs/graphql';
+import * as bcrypt from "bcrypt";
 
 
 export type UserDocument = User & Document
@@ -38,3 +39,17 @@ export class User extends Document {
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+UserSchema.pre<UserDocument>('save', async function (next) {
+  if (!this.isModified('password')) {
+    return next();
+  }
+
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (err) {
+    next(err);
+  }
+});

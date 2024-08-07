@@ -1,8 +1,9 @@
 import { raw, Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
+import {Document} from 'mongoose';
 
 @Schema({ timestamps: true })
-export class Post {
+export class Post extends Document {
   @Prop(
     raw({
       id: { type: mongoose.Schema.Types.ObjectId },

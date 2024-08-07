@@ -1,15 +1,37 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePostInput } from './dto/create-post.input';
 import { UpdatePostInput } from './dto/update-post.input';
+import { User } from 'src/user/schema/user.schema';
+import { PostRepository } from './repository/post.repository';
+import { Args, Int } from '@nestjs/graphql';
 
 @Injectable()
 export class PostService {
-  create(createPostInput: CreatePostInput) {
-    return 'This action adds a new post';
+  constructor(private readonly postRepository: PostRepository) {}
+  createPost(createPostInput: CreatePostInput, user: User) {
+    const values = {
+      title: createPostInput.title,
+      description: createPostInput.description,
+      owner: { id: user.id, username: user.username },
+    };
+
+    return this.postRepository.createPost(values);
   }
 
-  findAll() {
-    return `This action returns all post`;
+  getAllPosts(user: User, page, limit, skip) {
+    const filter = {
+      owner: {
+        id: user.id,
+        username: user.username,
+      },
+    };
+    const options = {
+      page,
+      limit,
+      skip
+    };
+
+    return this.postRepository.getAllPosts(filter, options);
   }
 
   findOne(id: number) {
