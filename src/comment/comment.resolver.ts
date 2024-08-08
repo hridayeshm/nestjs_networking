@@ -1,35 +1,48 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { CommentService } from './comment.service';
-import { Comment } from './entities/comment.entity';
 import { CreateCommentInput } from './dto/create-comment.input';
 import { UpdateCommentInput } from './dto/update-comment.input';
+import { PostType } from 'src/post/entities/post.entity';
+import { UseGuards } from '@nestjs/common';
+import { GqlAuthGuard } from 'src/auth/guards/jwt.auth-guard';
+import { CurrentUser } from 'src/decorators/current-user.decorator';
+import { User } from 'src/user/schema/user.schema';
+import { CommentType } from './entities/comment.entity';
 
-@Resolver(() => Comment)
+@Resolver(() => PostType)
 export class CommentResolver {
   constructor(private readonly commentService: CommentService) {}
 
-  @Mutation(() => Comment)
-  createComment(@Args('createCommentInput') createCommentInput: CreateCommentInput) {
-    return this.commentService.create(createCommentInput);
+  @Mutation(() => PostType)
+  @UseGuards(GqlAuthGuard)
+  createComment(@CurrentUser() user: User, @Args('createCommentInput') createCommentInput: CreateCommentInput) {
+    return this.commentService.createComment(user, createCommentInput);
   }
 
-  @Query(() => [Comment], { name: 'comment' })
-  findAll() {
-    return this.commentService.findAll();
+  @Query(() => [CommentType])
+  @UseGuards(GqlAuthGuard)
+  getAllComments(@CurrentUser() user: User, @Args('id') id: string) {
+    return this.commentService.getAllComments(id);
   }
 
-  @Query(() => Comment, { name: 'comment' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.commentService.findOne(id);
+  @Mutation(() => PostType)
+  @UseGuards(GqlAuthGuard)
+  updateComment(
+    @CurrentUser() user: User,
+    @Args('updateCommentInput') updateCommentInput: UpdateCommentInput,
+  ) {
+    return this.commentService.updateComment(
+      updateCommentInput.id,
+      updateCommentInput,
+    );
   }
 
-  @Mutation(() => Comment)
-  updateComment(@Args('updateCommentInput') updateCommentInput: UpdateCommentInput) {
-    return this.commentService.update(updateCommentInput.id, updateCommentInput);
-  }
-
-  @Mutation(() => Comment)
-  removeComment(@Args('id', { type: () => Int }) id: number) {
-    return this.commentService.remove(id);
+  @Mutation(() => PostType)
+  @UseGuards(GqlAuthGuard)
+  deleteComment(
+    @CurrentUser() user: User,
+    @Args('id', { type: () => Int }) id: number,
+  ) {
+    return this.commentService.deleteComment(id);
   }
 }

@@ -23,27 +23,36 @@ export class PostResolver {
     return this.postService.getAllPosts(user, page, limit, skip);
   }
 
-  @Query(() => PostType, { name: 'post' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.postService.findOne(id);
+  @Query(() => PostType)
+  @UseGuards(GqlAuthGuard)
+  getPostByID(@CurrentUser() user: User, @Args('id') id: string) {
+    return this.postService.getPostByID(user, id);
   }
 
   @Mutation(() => PostType)
   @UseGuards(GqlAuthGuard)
   createPost(
-    @Args('createPostInput') createPostInput: CreatePostInput,
     @CurrentUser() user: User,
+    @Args('createPostInput') createPostInput: CreatePostInput,
   ) {
-    return this.postService.createPost(createPostInput, user);
+    return this.postService.createPost(user, createPostInput);
   }
 
   @Mutation(() => PostType)
-  updatePost(@Args('updatePostInput') updatePostInput: UpdatePostInput) {
-    return this.postService.update(updatePostInput.id, updatePostInput);
+  @UseGuards(GqlAuthGuard)
+  updatePost(
+    @CurrentUser() user: User,
+    @Args('updatePostInput') updatePostInput: UpdatePostInput,
+  ) {
+    return this.postService.updatePost(user, updatePostInput);
   }
 
   @Mutation(() => PostType)
-  removePost(@Args('id', { type: () => Int }) id: number) {
-    return this.postService.remove(id);
+  @UseGuards(GqlAuthGuard)
+  deletePost(
+    @CurrentUser() user: User,
+    @Args('id') id: string,
+  ) {
+    return this.postService.deletePost(user, id);
   }
 }

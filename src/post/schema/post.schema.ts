@@ -6,7 +6,7 @@ import {Document} from 'mongoose';
 export class Post extends Document {
   @Prop(
     raw({
-      id: { type: mongoose.Schema.Types.ObjectId },
+      id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
       username: { type: String },
     }),
   )

@@ -7,14 +7,15 @@ type Auth {
   exampleField: Int!
 }
 
-type Comment {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
 type CommentNestedInsidePost {
   commentedBy: CommentedBy!
   content: String!
+}
+
+type CommentType {
+  author: ID!
+  content: String!
+  post: ID!
 }
 
 type CommentedBy {
@@ -23,8 +24,8 @@ type CommentedBy {
 }
 
 input CreateCommentInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  content: String!
+  post: ID!
 }
 
 input CreateEventInput {
@@ -33,11 +34,6 @@ input CreateEventInput {
 }
 
 input CreateFollowInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input CreateLikeInput {
   """Example field (placeholder)"""
   exampleField: Int!
 }
@@ -67,38 +63,32 @@ type Follow {
   exampleField: Int!
 }
 
-type Like {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
 input LoginUserInput {
   email: String!
   password: String!
 }
 
 type Mutation {
-  createComment(createCommentInput: CreateCommentInput!): Comment!
+  createComment(createCommentInput: CreateCommentInput!): PostType!
   createEvent(createEventInput: CreateEventInput!): Event!
   createFollow(createFollowInput: CreateFollowInput!): Follow!
-  createLike(createLikeInput: CreateLikeInput!): Like!
   createPost(createPostInput: CreatePostInput!): PostType!
   createToken(createTokenInput: CreateTokenInput!): Token!
+  deleteComment(id: Int!): PostType!
+  deletePost(id: String!): PostType!
+  likePost(id: String!): PostType!
   login(loginUserInput: LoginUserInput!): String!
   registerUser(registerUserInput: RegisterUserInput!): UserType!
   removeAuth(id: Int!): Auth!
-  removeComment(id: Int!): Comment!
   removeEvent(id: Int!): Event!
   removeFollow(id: Int!): Follow!
-  removeLike(id: Int!): Like!
-  removePost(id: Int!): PostType!
   removeToken(id: Int!): Token!
   removeUser(id: Int!): UserType!
+  unlike(id: String!): PostType!
   updateAuth(updateAuthInput: UpdateAuthInput!): Auth!
-  updateComment(updateCommentInput: UpdateCommentInput!): Comment!
+  updateComment(updateCommentInput: UpdateCommentInput!): PostType!
   updateEvent(updateEventInput: UpdateEventInput!): Event!
   updateFollow(updateFollowInput: UpdateFollowInput!): Follow!
-  updateLike(updateLikeInput: UpdateLikeInput!): Like!
   updatePost(updatePostInput: UpdatePostInput!): PostType!
   updateToken(updateTokenInput: UpdateTokenInput!): Token!
   updateUser(updateUserInput: UpdateUserInput!): UserType!
@@ -121,14 +111,13 @@ type PostType {
 }
 
 type Query {
-  comment(id: Int!): Comment!
   event(id: Int!): Event!
   follow(id: Int!): Follow!
+  getAllComments(id: String!): [CommentType!]!
   getAllPosts(limit: Int, page: Int, skip: Int): [PostType!]!
-  like(id: Int!): Like!
+  getPostByID(id: String!): PostType!
   lo(id: Int!): UserType!
   me: UserType!
-  post(id: Int!): PostType!
   token(id: Int!): Token!
   user: [UserType!]!
 }
@@ -151,9 +140,9 @@ input UpdateAuthInput {
 }
 
 input UpdateCommentInput {
-  """Example field (placeholder)"""
-  exampleField: Int
+  content: String
   id: Int!
+  post: ID
 }
 
 input UpdateEventInput {
@@ -168,15 +157,9 @@ input UpdateFollowInput {
   id: Int!
 }
 
-input UpdateLikeInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
-}
-
 input UpdatePostInput {
   description: String
-  id: Int!
+  id: String!
   title: String
 }
 

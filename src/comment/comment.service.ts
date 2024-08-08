@@ -1,26 +1,30 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCommentInput } from './dto/create-comment.input';
+import { CreateCommentInput, CreateCommentWithAuthorInfo } from './dto/create-comment.input';
 import { UpdateCommentInput } from './dto/update-comment.input';
+import { CommentRepository } from './repository/comment.repository';
+import { User } from 'src/user/schema/user.schema';
 
 @Injectable()
 export class CommentService {
-  create(createCommentInput: CreateCommentInput) {
-    return 'This action adds a new comment';
+  constructor(private readonly commentRepository: CommentRepository){}
+  createComment(user: User, createCommentInput: CreateCommentInput) {
+    const values: CreateCommentWithAuthorInfo = {
+      post: createCommentInput.post,
+      content: createCommentInput.content, 
+      author: user.id
+    }
+    return this.commentRepository.createComment(user, values);
   }
 
-  findAll() {
-    return `This action returns all comment`;
+  getAllComments(id: string) {
+    return this.commentRepository.getAllComments(id);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} comment`;
-  }
-
-  update(id: number, updateCommentInput: UpdateCommentInput) {
+  updateComment(id: number, updateCommentInput: UpdateCommentInput) {
     return `This action updates a #${id} comment`;
   }
 
-  remove(id: number) {
+  deleteComment(id: number) {
     return `This action removes a #${id} comment`;
   }
 }
