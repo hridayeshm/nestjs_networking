@@ -11,8 +11,8 @@ export class FollowService {
     return this.followRepository.sendFollowRequest(user, id);
   }
 
-  findAll() {
-    return `This action returns all follow`;
+  getAllNotifications(user: User) {
+    return this.followRepository.getAllNotifications(user);
   }
 
   findOne(id: number) {

@@ -1,7 +1,6 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { FollowService } from './follow.service';
 import { Follow } from './entities/follow.entity';
-import { CreateFollowInput } from './dto/create-follow.input';
 import { UpdateFollowInput } from './dto/update-follow.input';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from 'src/auth/guards/jwt.auth-guard';
@@ -19,9 +18,10 @@ export class FollowResolver {
     return this.followService.sendFollowRequest(user, id);
   }
 
-  @Query(() => [Follow], { name: 'follow' })
-  findAll() {
-    return this.followService.findAll();
+  @Query(() => [Follow])
+  @UseGuards(GqlAuthGuard)
+  getAllNotifications(@CurrentUser() user: User) {
+    return this.followService.getAllNotifications(user);
   }
 
   @Query(() => Follow, { name: 'follow' })

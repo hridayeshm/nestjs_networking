@@ -25,5 +25,32 @@ export class FollowRepository {
     return notification;
   }
 
-  async listAllNotifications() {}
+  async getAllNotifications(user: User) {
+    return this.notificationModel.aggregate([
+      { $match: { to: user.id } },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'from',
+          foreignField: '_id',
+          as: 'follower',
+        },
+      },
+      {
+        $project: {
+          requester: {
+            'requester': '$follower.username',
+            'id': '$follower._id',
+            'email': '$follower.email',
+            'requester\'s followers': '$follower.followers',
+          },
+
+          status: 1,
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+    ]);
+  }
 }
