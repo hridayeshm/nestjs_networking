@@ -1,18 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAuthInput } from './dto/create-auth.input';
 import { UpdateAuthInput } from './dto/update-auth.input';
 import { v4 as uuidv4 } from 'uuid';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/user/schema/user.schema';
 import { LoginUserInput } from 'src/user/dto/login-user.input';
-import { AuthRepository } from './repository/auth.repository';
-import { UserService } from 'src/user/user.service';
 import { UserRepository } from 'src/user/repository/user.repository';
+import { TokenRepository } from 'src/token/repository/token.repository';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userRepository: UserRepository,
+    private readonly tokenRepository: TokenRepository,
     private jwtService: JwtService,
   ) {}
 
@@ -49,9 +48,9 @@ export class AuthService {
       username: user.username,
       uuid: uuid,
     };
+    this.tokenRepository.createToken(user, uuid);
 
-    return await this.jwtService.signAsync(jwt_payload);
-    
+    return  this.jwtService.signAsync(jwt_payload);
   }
 
   findAll() {

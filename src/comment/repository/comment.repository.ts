@@ -5,6 +5,7 @@ import { Post } from 'src/post/schema/post.schema';
 import { User } from 'src/user/schema/user.schema';
 import { CreateCommentWithAuthorInfo } from '../dto/create-comment.input';
 import { Comment } from '../schema/comment.schema';
+import { UpdateCommentInput } from '../dto/update-comment.input';
 
 @Injectable()
 export class CommentRepository {
@@ -44,6 +45,62 @@ export class CommentRepository {
   }
 
   async getAllComments(id: string) {
-    return this.commentModel.find({post: id});
+    return this.commentModel.find({ post: id });
+  }
+
+  async updateComment(user: User, updateCommentInput: UpdateCommentInput) {
+    return this.commentModel.findOneAndUpdate(
+      { _id: updateCommentInput.post, author: user.id },
+      {
+        $set: {
+          content: updateCommentInput.content,
+        },
+      },
+      { new: true },
+    );
+  }
+
+  async deleteComment(user: User, id: string) {
+    const deletedComment = await this.commentModel.findOneAndDelete({
+      _id: id,
+      author: user.id,
+    });
+
+    console.log(deletedComment)
+    const uncommentedPost = this.postModel.findOneAndUpdate(
+      { _id: deletedComment.post },
+      { $inc: { commentCount: -1 } },
+    );
+
+    return uncommentedPost;
+  }
+
+  async deleteCommentByPostOwner(
+    user: User,
+    postID: string,
+    commentID: string,
+  ) {
+    const post = this.postModel.findOne({ _id: postID, owner: user.id });
+
+    if (!post) {
+      throw new Error(
+        'post not found or you are authorized to delete this comment',
+      );
+    }
+
+    const deletedComment = await this.commentModel.findOneAndDelete({
+      _id: commentID,
+    });
+
+    if (!deletedComment) {
+      throw new Error('comment not found or could not be deleted');
+    }
+
+    const uncommentedPost = this.postModel.findOneAndUpdate(
+      { _id: deletedComment.post },
+      { $inc: { commentCount: -1 } },
+    );
+
+    return uncommentedPost;
   }
 }

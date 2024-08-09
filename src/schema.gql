@@ -33,7 +33,7 @@ input CreateEventInput {
   exampleField: Int!
 }
 
-input CreateFollowInput {
+input CreateNotificationInput {
   """Example field (placeholder)"""
   exampleField: Int!
 }
@@ -71,28 +71,38 @@ input LoginUserInput {
 type Mutation {
   createComment(createCommentInput: CreateCommentInput!): PostType!
   createEvent(createEventInput: CreateEventInput!): Event!
-  createFollow(createFollowInput: CreateFollowInput!): Follow!
+  createNotification(createNotificationInput: CreateNotificationInput!): Notification!
   createPost(createPostInput: CreatePostInput!): PostType!
   createToken(createTokenInput: CreateTokenInput!): Token!
-  deleteComment(id: Int!): PostType!
+  deleteComment(id: String!): PostType!
+  deleteCommentByPostOwner(commentID: String!, postID: String!): PostType!
   deletePost(id: String!): PostType!
-  likePost(id: String!): PostType!
+  likePost(postID: String!): PostType!
   login(loginUserInput: LoginUserInput!): String!
   registerUser(registerUserInput: RegisterUserInput!): UserType!
   removeAuth(id: Int!): Auth!
   removeEvent(id: Int!): Event!
   removeFollow(id: Int!): Follow!
+  removeNotification(id: Int!): Notification!
   removeToken(id: Int!): Token!
   removeUser(id: Int!): UserType!
-  unlike(id: String!): PostType!
+  sendFollowRequest(id: String!): Notification!
+  unlike(postID: String!): PostType!
   updateAuth(updateAuthInput: UpdateAuthInput!): Auth!
   updateComment(updateCommentInput: UpdateCommentInput!): PostType!
   updateEvent(updateEventInput: UpdateEventInput!): Event!
   updateFollow(updateFollowInput: UpdateFollowInput!): Follow!
+  updateNotification(updateNotificationInput: UpdateNotificationInput!): Notification!
   updatePost(updatePostInput: UpdatePostInput!): PostType!
   updateToken(updateTokenInput: UpdateTokenInput!): Token!
   updateUser(updateUserInput: UpdateUserInput!): UserType!
   verifyUser(emailVerificationToken: String!): UserType!
+}
+
+type Notification {
+  from: String!
+  status: String!
+  to: String!
 }
 
 type Owner {
@@ -118,6 +128,7 @@ type Query {
   getPostByID(id: String!): PostType!
   lo(id: Int!): UserType!
   me: UserType!
+  notification(id: Int!): Notification!
   token(id: Int!): Token!
   user: [UserType!]!
 }
@@ -140,9 +151,8 @@ input UpdateAuthInput {
 }
 
 input UpdateCommentInput {
-  content: String
-  id: Int!
-  post: ID
+  content: String!
+  post: ID!
 }
 
 input UpdateEventInput {
@@ -152,6 +162,12 @@ input UpdateEventInput {
 }
 
 input UpdateFollowInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
+input UpdateNotificationInput {
   """Example field (placeholder)"""
   exampleField: Int
   id: Int!
@@ -176,7 +192,7 @@ input UpdateUserInput {
   username: String
 }
 
-enum UserRole {
+enum UserStatus {
   Active
   Blocked
   Inactive
@@ -189,6 +205,6 @@ type UserType {
   followees: [ID!]!
   followers: [ID!]!
   mailVerifiedAt: DateTime
-  status: UserRole!
+  status: UserStatus!
   username: String!
 }

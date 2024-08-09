@@ -12,13 +12,13 @@ export class LikeResolver {
 
   @Mutation(() => PostType)
   @UseGuards(GqlAuthGuard)
-  likePost(@CurrentUser() user: User, @Args('id') id: string) {
-    return this.likeService.likePost(user, id);
+  likePost(@CurrentUser() user: User, @Args('postID') postID: string) {
+    return this.likeService.likePost(user, postID);
   }
 
   @Mutation(() => PostType)
   @UseGuards(GqlAuthGuard)
-  unlike(@CurrentUser() user: User, @Args('id') id: string) {
-    return this.likeService.unlikePost(user, id);
+  unlike(@CurrentUser() user: User, @Args('postID') postID: string) {
+    return this.likeService.unlikePost(user, postID);
   }
 }

@@ -14,6 +14,7 @@ import { FollowModule } from './follow/follow.module';
 import { EventModule } from './event/event.module';
 import { TokenModule } from './token/token.module';
 import { AuthModule } from './auth/auth.module';
+import { NotificationModule } from './notification/notification.module';
 
 
 @Module({
@@ -44,6 +45,7 @@ import { AuthModule } from './auth/auth.module';
     EventModule,
     TokenModule,
     AuthModule,
+    NotificationModule,
     
   ],
 

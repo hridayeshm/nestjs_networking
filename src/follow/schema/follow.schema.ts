@@ -1,4 +1,4 @@
-import { raw, Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
+import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { mongo } from 'mongoose';
 
 @Schema({ timestamps: true })

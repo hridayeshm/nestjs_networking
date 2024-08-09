@@ -62,7 +62,7 @@ export class PostRepository {
 
     //       likeCount: 1,
 
-    //       "postCreator.username": 1,
+    //       "name: postCreator.username": 1,
     //       "postCreator._id": 1,
 
     //       "likes.author": 1,

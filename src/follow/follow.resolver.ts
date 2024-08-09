@@ -3,14 +3,20 @@ import { FollowService } from './follow.service';
 import { Follow } from './entities/follow.entity';
 import { CreateFollowInput } from './dto/create-follow.input';
 import { UpdateFollowInput } from './dto/update-follow.input';
+import { UseGuards } from '@nestjs/common';
+import { GqlAuthGuard } from 'src/auth/guards/jwt.auth-guard';
+import { CurrentUser } from 'src/decorators/current-user.decorator';
+import { User } from 'src/user/schema/user.schema';
+import { Notification } from 'src/notification/entities/notification.entity';
 
 @Resolver(() => Follow)
 export class FollowResolver {
   constructor(private readonly followService: FollowService) {}
 
-  @Mutation(() => Follow)
-  createFollow(@Args('createFollowInput') createFollowInput: CreateFollowInput) {
-    return this.followService.create(createFollowInput);
+  @Mutation(() => Notification)
+  @UseGuards(GqlAuthGuard)
+  sendFollowRequest(@CurrentUser() user: User, @Args('id') id: string) {
+    return this.followService.sendFollowRequest(user, id);
   }
 
   @Query(() => [Follow], { name: 'follow' })
@@ -24,7 +30,9 @@ export class FollowResolver {
   }
 
   @Mutation(() => Follow)
-  updateFollow(@Args('updateFollowInput') updateFollowInput: UpdateFollowInput) {
+  updateFollow(
+    @Args('updateFollowInput') updateFollowInput: UpdateFollowInput,
+  ) {
     return this.followService.update(updateFollowInput.id, updateFollowInput);
   }
 

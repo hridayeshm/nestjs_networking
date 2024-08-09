@@ -20,11 +20,15 @@ export class CommentService {
     return this.commentRepository.getAllComments(id);
   }
 
-  updateComment(id: number, updateCommentInput: UpdateCommentInput) {
-    return `This action updates a #${id} comment`;
+  updateComment(user: User, updateCommentInput: UpdateCommentInput) {
+    return this.commentRepository.updateComment(user, updateCommentInput);
   }
 
-  deleteComment(id: number) {
-    return `This action removes a #${id} comment`;
+  deleteComment(user: User, id: string) {
+    return this.commentRepository.deleteComment(user, id);
+  }
+
+  deleteCommentByPostOwner(user: User, postID: string, commentID: string) {
+    return this.commentRepository.deleteCommentByPostOwner(user, postID, commentID);
   }
 }

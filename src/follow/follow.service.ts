@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { CreateFollowInput } from './dto/create-follow.input';
 import { UpdateFollowInput } from './dto/update-follow.input';
+import { FollowRepository } from './repository/follow.repository';
+import { User } from 'src/user/schema/user.schema';
 
 @Injectable()
 export class FollowService {
-  create(createFollowInput: CreateFollowInput) {
-    return 'This action adds a new follow';
+  constructor(private readonly followRepository: FollowRepository){}
+  sendFollowRequest(user: User, id: string) {
+    return this.followRepository.sendFollowRequest(user, id);
   }
 
   findAll() {

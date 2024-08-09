@@ -15,7 +15,10 @@ export class CommentResolver {
 
   @Mutation(() => PostType)
   @UseGuards(GqlAuthGuard)
-  createComment(@CurrentUser() user: User, @Args('createCommentInput') createCommentInput: CreateCommentInput) {
+  createComment(
+    @CurrentUser() user: User,
+    @Args('createCommentInput') createCommentInput: CreateCommentInput,
+  ) {
     return this.commentService.createComment(user, createCommentInput);
   }
 
@@ -31,18 +34,22 @@ export class CommentResolver {
     @CurrentUser() user: User,
     @Args('updateCommentInput') updateCommentInput: UpdateCommentInput,
   ) {
-    return this.commentService.updateComment(
-      updateCommentInput.id,
-      updateCommentInput,
-    );
+    return this.commentService.updateComment(user, updateCommentInput);
   }
 
   @Mutation(() => PostType)
   @UseGuards(GqlAuthGuard)
-  deleteComment(
+  deleteComment(@CurrentUser() user: User, @Args('id') id: string) {
+    return this.commentService.deleteComment(user, id);
+  }
+
+  @Mutation(() => PostType)
+  @UseGuards(GqlAuthGuard)
+  deleteCommentByPostOwner(
     @CurrentUser() user: User,
-    @Args('id', { type: () => Int }) id: number,
+    @Args('commentID') commentID: string,
+    @Args('postID') postID: string,
   ) {
-    return this.commentService.deleteComment(id);
+    return this.commentService.deleteCommentByPostOwner(user, postID, commentID);
   }
 }

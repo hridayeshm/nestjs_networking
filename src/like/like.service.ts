@@ -7,17 +7,17 @@ import { User } from 'src/user/schema/user.schema';
 export class LikeService {
   constructor(private readonly likeRepository: LikeRepository) {}
 
-  likePost(user: User, id: string) {
+  likePost(user: User, postID: string) {
     const values = {
-      post: id,
+      post: postID,
       author: user.id,
     };
     return this.likeRepository.likePost(values);
   }
 
-  unlikePost(user: User, id: string) {
+  unlikePost(user: User, postID: string) {
     const filter = {
-      post: id,
+      post: postID,
       author: user.id
     }
     return this.likeRepository.unlikePost(filter);
