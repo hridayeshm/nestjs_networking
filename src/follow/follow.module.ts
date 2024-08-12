@@ -8,6 +8,7 @@ import {
   NotificationSchema,
 } from 'src/notification/schema/notification.schema';
 import { FollowRepository } from './repository/follow.repository';
+import { User, UserSchema } from 'src/user/schema/user.schema';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { FollowRepository } from './repository/follow.repository';
     MongooseModule.forFeature([
       { name: Notification.name, schema: NotificationSchema },
     ]),
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
   providers: [FollowResolver, FollowService, FollowRepository],
 })

@@ -7,6 +7,11 @@ type Auth {
   exampleField: Int!
 }
 
+input ChangePasswordInput {
+  currentPassword: String!
+  newPassword: String!
+}
+
 type CommentNestedInsidePost {
   commentedBy: CommentedBy!
   content: String!
@@ -58,9 +63,29 @@ type Event {
   exampleField: Int!
 }
 
-type Follow {
-  """Example field (placeholder)"""
-  exampleField: Int!
+type FollowType {
+  requester: Requester!
+  status: String!
+}
+
+type FolloweeInfoType {
+  id: ID!
+  username: String!
+}
+
+type FolloweeType {
+  followees: [FolloweeInfoType!]!
+  id: ID!
+}
+
+type FollowerInfoType {
+  id: ID!
+  username: String!
+}
+
+type FollowerType {
+  followers: [FollowerInfoType!]!
+  id: ID!
 }
 
 input LoginUserInput {
@@ -69,9 +94,10 @@ input LoginUserInput {
 }
 
 type Mutation {
+  changePassword(changePasswordInput: ChangePasswordInput!): UserType!
   createComment(createCommentInput: CreateCommentInput!): PostType!
   createEvent(createEventInput: CreateEventInput!): Event!
-  createNotification(createNotificationInput: CreateNotificationInput!): Notification!
+  createNotification(createNotificationInput: CreateNotificationInput!): NotificationType!
   createPost(createPostInput: CreatePostInput!): PostType!
   createToken(createTokenInput: CreateTokenInput!): Token!
   deleteComment(id: String!): PostType!
@@ -79,27 +105,26 @@ type Mutation {
   deletePost(id: String!): PostType!
   likePost(postID: String!): PostType!
   login(loginUserInput: LoginUserInput!): String!
+  logoutUser: UserType!
   registerUser(registerUserInput: RegisterUserInput!): UserType!
   removeAuth(id: Int!): Auth!
   removeEvent(id: Int!): Event!
-  removeFollow(id: Int!): Follow!
-  removeNotification(id: Int!): Notification!
+  removeFollow(id: Int!): FollowType!
+  removeNotification(id: Int!): NotificationType!
   removeToken(id: Int!): Token!
-  removeUser(id: Int!): UserType!
-  sendFollowRequest(id: String!): Notification!
+  respondToRequest(respondToRequestInput: RespondToRequestInput!): NotificationType!
+  sendFollowRequest(id: String!): NotificationType!
   unlike(postID: String!): PostType!
   updateAuth(updateAuthInput: UpdateAuthInput!): Auth!
   updateComment(updateCommentInput: UpdateCommentInput!): PostType!
   updateEvent(updateEventInput: UpdateEventInput!): Event!
-  updateFollow(updateFollowInput: UpdateFollowInput!): Follow!
-  updateNotification(updateNotificationInput: UpdateNotificationInput!): Notification!
+  updateNotification(updateNotificationInput: UpdateNotificationInput!): NotificationType!
   updatePost(updatePostInput: UpdatePostInput!): PostType!
   updateToken(updateTokenInput: UpdateTokenInput!): Token!
-  updateUser(updateUserInput: UpdateUserInput!): UserType!
   verifyUser(emailVerificationToken: String!): UserType!
 }
 
-type Notification {
+type NotificationType {
   from: String!
   status: String!
   to: String!
@@ -122,13 +147,16 @@ type PostType {
 
 type Query {
   event(id: Int!): Event!
-  follow(id: Int!): Follow!
   getAllComments(id: String!): [CommentType!]!
+  getAllNotifications: [FollowType!]!
   getAllPosts(limit: Int, page: Int, skip: Int): [PostType!]!
   getPostByID(id: String!): PostType!
+  listFollowees: [FolloweeType!]!
+  listFollowers: [FollowerType!]!
   lo(id: Int!): UserType!
   me: UserType!
-  notification(id: Int!): Notification!
+  notification(id: Int!): NotificationType!
+  showFeed: [PostType!]!
   token(id: Int!): Token!
   user: [UserType!]!
 }
@@ -137,6 +165,18 @@ input RegisterUserInput {
   email: String!
   password: String!
   username: String!
+}
+
+type Requester {
+  email: String!
+  followers: [String!]!
+  id: ID!
+  username: String!
+}
+
+input RespondToRequestInput {
+  action: String!
+  id: ID!
 }
 
 type Token {
@@ -161,12 +201,6 @@ input UpdateEventInput {
   id: Int!
 }
 
-input UpdateFollowInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
-}
-
 input UpdateNotificationInput {
   """Example field (placeholder)"""
   exampleField: Int
@@ -183,13 +217,6 @@ input UpdateTokenInput {
   """Example field (placeholder)"""
   exampleField: Int
   id: Int!
-}
-
-input UpdateUserInput {
-  email: String
-  id: Int!
-  password: String
-  username: String
 }
 
 enum UserStatus {

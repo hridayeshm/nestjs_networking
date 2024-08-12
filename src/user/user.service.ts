@@ -7,6 +7,8 @@ import { UserType } from './entities/user.entity';
 import { RegisterUserInput } from './dto/register-user.input';
 import { NodeMailerService } from 'src/service/nodemailer.service';
 import mongoose from 'mongoose';
+import { ChangePasswordInput } from './dto/change-password.input';
+import { JwtPayloadUser } from 'src/token/interfaces/jwt-payload.interface';
 
 @Injectable()
 export class UserService {
@@ -22,6 +24,18 @@ export class UserService {
     const nodeMailerService = new NodeMailerService();
     nodeMailerService.sendVerficationMail(registeredUser);
     return registeredUser;
+  }
+
+  async showFeed(user: User) {
+    return this.userRepository.showFeed(user);
+  }
+
+  async changePassword(user: User, changePasswordInput: ChangePasswordInput) {
+    return this.userRepository.changePassword(user, changePasswordInput)
+  }
+
+  async logoutUser(user: JwtPayloadUser) {
+    return this.userRepository.logoutUser(user);
   }
 
   findAll() {

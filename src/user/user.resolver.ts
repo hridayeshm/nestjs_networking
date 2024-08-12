@@ -7,6 +7,9 @@ import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from 'src/auth/guards/jwt.auth-guard';
 import { CurrentUser } from 'src/decorators/current-user.decorator';
 import { User, UserDocument } from './schema/user.schema';
+import { PostType } from 'src/post/entities/post.entity';
+import { ChangePasswordInput } from './dto/change-password.input';
+import { JwtPayloadUser } from 'src/token/interfaces/jwt-payload.interface';
 
 @Resolver(() => UserType)
 export class UserResolver {
@@ -18,6 +21,12 @@ export class UserResolver {
     const me = this.userService.findById(user.id);
 
     return me;
+  }
+
+  @Query(() => [PostType])
+  @UseGuards(GqlAuthGuard)
+  showFeed(@CurrentUser() user: User) {
+    return this.userService.showFeed(user);
   }
 
   @Query(() => [UserType], { name: 'user' })
@@ -38,12 +47,19 @@ export class UserResolver {
   }
 
   @Mutation(() => UserType)
-  updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
-    return this.userService.update(updateUserInput.id, updateUserInput);
+  @UseGuards(GqlAuthGuard)
+  async changePassword(
+    @CurrentUser() user: User,
+    @Args('changePasswordInput') changePasswordInput: ChangePasswordInput,
+  ) {
+    console.log(user)
+    return this.userService.changePassword(user, changePasswordInput);
   }
 
   @Mutation(() => UserType)
-  removeUser(@Args('id', { type: () => Int }) id: number) {
-    return this.userService.remove(id);
+  @UseGuards(GqlAuthGuard)
+  async logoutUser(@CurrentUser() user: JwtPayloadUser) {
+    console.log(user)
+    return this.userService.logoutUser(user);
   }
 }

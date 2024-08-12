@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { CreateFollowInput } from './dto/create-follow.input';
-import { UpdateFollowInput } from './dto/update-follow.input';
 import { FollowRepository } from './repository/follow.repository';
 import { User } from 'src/user/schema/user.schema';
+import { RespondToRequestInput } from './dto/respond-to-request.input';
 
 @Injectable()
 export class FollowService {
-  constructor(private readonly followRepository: FollowRepository){}
+  constructor(private readonly followRepository: FollowRepository) {}
   sendFollowRequest(user: User, id: string) {
     return this.followRepository.sendFollowRequest(user, id);
   }
@@ -15,12 +14,20 @@ export class FollowService {
     return this.followRepository.getAllNotifications(user);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} follow`;
+  listFollowers(user: User) {
+    return this.followRepository.listFollowers(user);
   }
 
-  update(id: number, updateFollowInput: UpdateFollowInput) {
-    return `This action updates a #${id} follow`;
+  listFollowees(user: User) {
+    return this.followRepository.listFollowees(user);
+  }
+
+  respondToRequest(user: User, respondToRequestInput: RespondToRequestInput) {
+    if (respondToRequestInput.action.toLowerCase() === 'reject') {
+      return this.followRepository.rejectRequest(user, respondToRequestInput);
+    } else if (respondToRequestInput.action.toLowerCase() === 'accept') {
+      return this.followRepository.acceptRequest(user, respondToRequestInput);
+    }
   }
 
   remove(id: number) {
