@@ -3,15 +3,15 @@ import mongoose from 'mongoose';
 import { Document } from 'mongoose';
 
 @Schema({ timestamps: true })
-export class Token extends Document {
-  @Prop({ type: mongoose.Schema.Types.ObjectId })
-  userID: string;
+export class RefreshToken extends Document {
+  @Prop({ type: String})
+  token: string;
 
-  @Prop({ type: String })
-  email: string;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' })
+  userId: string;
 
-  @Prop({ type: String })
-  uuid: string;
+  @Prop({ type: Date, required: true })
+  expires: Date;
 }
 
-export const TokenSchema = SchemaFactory.createForClass(Token);
+export const RefreshTokenSchema = SchemaFactory.createForClass(RefreshToken);

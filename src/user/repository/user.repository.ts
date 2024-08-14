@@ -54,6 +54,13 @@ export class UserRepository {
     return await bcrypt.compare(inputPassword, dbPassword);
   }
 
+  async verifyUserStatus(status: UserStatus) {
+    if (status === UserStatus.Inactive || status === UserStatus.Blocked) {
+      return false;
+    }
+    return true;
+  }
+
   async findById(id: string): Promise<User> {
     return this.userModel.findOne({ _id: id });
   }
@@ -78,9 +85,8 @@ export class UserRepository {
   }
 
   async logoutUser(user: JwtPayloadUser) {
-
-    //khas ma refresh token pathaune logout garda 
-    this.tokenRepository.deleteToken(user);// token deletion not working 
+    //khas ma refresh token pathaune logout garda
+    this.tokenRepository.deleteToken(user); // token deletion not working
 
     return this.userModel.findOneAndUpdate(
       { _id: user.id },

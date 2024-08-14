@@ -3,8 +3,8 @@ import { IUser } from '../interfaces/user.interface';
 import { UserStatus } from '../enums/user-status.enum';
 import {Document} from 'mongoose';
 import mongoose from 'mongoose';
-import { Field } from '@nestjs/graphql';
 import * as bcrypt from "bcrypt";
+import { Role } from '../enums/user-role.enum';
 
 
 export type UserDocument = User & Document
@@ -35,6 +35,10 @@ export class User extends Document {
 
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User'}] })
   followees: string[]
+
+  @Prop({ type: [String], enum: Role, default: [Role.User] })
+  roles: Role[];
+
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

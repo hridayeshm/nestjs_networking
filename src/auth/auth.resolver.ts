@@ -4,6 +4,7 @@ import { Auth } from './entities/auth.entity';
 import { UpdateAuthInput } from './dto/update-auth.input';
 import { UserType } from 'src/user/entities/user.entity';
 import { LoginUserInput } from 'src/user/dto/login-user.input';
+import { LoginResponse } from './entities/login-response.entity';
 
 @Resolver(() => UserType)
 export class AuthResolver {
@@ -14,9 +15,14 @@ export class AuthResolver {
     return this.authService.verifyUser(emailVerificationToken);
   }
 
-  @Mutation(() => String)
+  @Mutation(() => LoginResponse)
   login(@Args('loginUserInput') loginUserInput: LoginUserInput) {
     return this.authService.login(loginUserInput);
+  }
+
+  @Mutation(() => LoginResponse)
+  generateNewAccessToken(@Args('refreshToken') refreshToken: string) {
+    return this.authService.generateNewAccessToken(refreshToken)
   }
 
   @Query(() => UserType)

@@ -7,13 +7,17 @@ import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from 'src/auth/guards/jwt.auth-guard';
 import { CurrentUser } from 'src/decorators/current-user.decorator';
 import { User } from 'src/user/schema/user.schema';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/decorators/roles.decorator';
+import { Role } from 'src/user/enums/user-role.enum';
 
+@UseGuards(GqlAuthGuard, RolesGuard)
 @Resolver(() => PostType)
 export class PostResolver {
   constructor(private readonly postService: PostService) {}
 
   @Query(() => [PostType])
-  @UseGuards(GqlAuthGuard)
+  @Roles(Role.Admin)
   getAllPosts(
     @CurrentUser() user: User,
     @Args('page', { type: () => Int, nullable: true }) page?: number,
@@ -24,13 +28,11 @@ export class PostResolver {
   }
 
   @Query(() => PostType)
-  @UseGuards(GqlAuthGuard)
   getPostByID(@CurrentUser() user: User, @Args('id') id: string) {
     return this.postService.getPostByID(user, id);
   }
 
   @Mutation(() => PostType)
-  @UseGuards(GqlAuthGuard)
   createPost(
     @CurrentUser() user: User,
     @Args('createPostInput') createPostInput: CreatePostInput,
@@ -39,7 +41,6 @@ export class PostResolver {
   }
 
   @Mutation(() => PostType)
-  @UseGuards(GqlAuthGuard)
   updatePost(
     @CurrentUser() user: User,
     @Args('updatePostInput') updatePostInput: UpdatePostInput,
@@ -48,11 +49,7 @@ export class PostResolver {
   }
 
   @Mutation(() => PostType)
-  @UseGuards(GqlAuthGuard)
-  deletePost(
-    @CurrentUser() user: User,
-    @Args('id') id: string,
-  ) {
+  deletePost(@CurrentUser() user: User, @Args('id') id: string) {
     return this.postService.deletePost(user, id);
   }
 }

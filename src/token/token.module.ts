@@ -3,10 +3,10 @@ import { TokenService } from './token.service';
 import { TokenResolver } from './token.resolver';
 import { TokenRepository } from './repository/token.repository';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Token, TokenSchema } from './schema/token.schema';
+import { RefreshToken, RefreshTokenSchema } from './schema/token.schema';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Token.name, schema: TokenSchema }])],
+  imports: [MongooseModule.forFeature([{ name: RefreshToken.name, schema: RefreshTokenSchema }])],
   providers: [TokenResolver, TokenService, TokenRepository],
   exports: [TokenRepository]
 })

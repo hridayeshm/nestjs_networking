@@ -88,6 +88,11 @@ type FollowerType {
   id: ID!
 }
 
+type LoginResponse {
+  accessToken: String!
+  refreshToken: String!
+}
+
 input LoginUserInput {
   email: String!
   password: String!
@@ -103,8 +108,9 @@ type Mutation {
   deleteComment(id: String!): PostType!
   deleteCommentByPostOwner(commentID: String!, postID: String!): PostType!
   deletePost(id: String!): PostType!
+  generateNewAccessToken(refreshToken: String!): LoginResponse!
   likePost(postID: String!): PostType!
-  login(loginUserInput: LoginUserInput!): String!
+  login(loginUserInput: LoginUserInput!): LoginResponse!
   logoutUser: UserType!
   registerUser(registerUserInput: RegisterUserInput!): UserType!
   removeAuth(id: Int!): Auth!

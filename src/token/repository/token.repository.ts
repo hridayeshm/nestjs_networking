@@ -1,22 +1,38 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Token } from '../schema/token.schema';
-import { User } from 'src/user/schema/user.schema';
-import { JwtPayloadUser } from '../interfaces/jwt-payload.interface';
+import { RefreshToken } from '../schema/token.schema';
 
 @Injectable()
 export class TokenRepository {
   constructor(
-    @InjectModel(Token.name) private readonly tokenModel: Model<Token>,
+    @InjectModel(RefreshToken.name)
+    private readonly tokenModel: Model<RefreshToken>,
   ) {}
 
-  async createToken(user: User, uuid: string) {
-    const tokenDoc = new this.tokenModel({userID: user.id, email: user.email, uuid});
-    await tokenDoc.save()
+  async get(oldRefreshToken: string) {
+    return this.tokenModel.findOne({ token: oldRefreshToken });
+  }
+
+  async createToken(token: string, userId: string) {
+    this.tokenModel.create({
+      token,
+      userId,
+      expires: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
+    });
+  }
+
+  async updateToken(oldRefreshToken: string, newRefreshToken: string) {
+    this.tokenModel.findOneAndUpdate(
+      { token: oldRefreshToken },
+      {
+        token: newRefreshToken,
+        expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      },
+    );
   }
 
   async deleteToken(user) {
-    await this.tokenModel.deleteOne({ uuid: user.uuid});
+    await this.tokenModel.deleteOne({ uuid: user.uuid });
   }
 }

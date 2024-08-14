@@ -45,8 +45,7 @@ import { NotificationModule } from './notification/notification.module';
     EventModule,
     TokenModule,
     AuthModule,
-    NotificationModule,
-    
+    NotificationModule,    
   ],
 
   providers: [AppService],
