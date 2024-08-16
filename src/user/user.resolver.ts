@@ -8,8 +8,9 @@ import { GqlAuthGuard } from 'src/auth/guards/jwt.auth-guard';
 import { CurrentUser } from 'src/decorators/current-user.decorator';
 import { User, UserDocument } from './schema/user.schema';
 import { PostType } from 'src/post/entities/post.entity';
-import { ChangePasswordInput } from './dto/change-password.input';
+import { ChangePasswordInput } from '../auth/dto/change-password.input';
 import { JwtPayloadUser } from 'src/token/interfaces/jwt-payload.interface';
+import { ChangePasswordType } from '../auth/entities/change-password.entity';
 
 @Resolver(() => UserType)
 export class UserResolver {
@@ -44,22 +45,5 @@ export class UserResolver {
     @Args('registerUserInput') registerUserInput: RegisterUserInput,
   ) {
     return this.userService.registerUser(registerUserInput);
-  }
-
-  @Mutation(() => UserType)
-  @UseGuards(GqlAuthGuard)
-  async changePassword(
-    @CurrentUser() user: User,
-    @Args('changePasswordInput') changePasswordInput: ChangePasswordInput,
-  ) {
-    console.log(user)
-    return this.userService.changePassword(user, changePasswordInput);
-  }
-
-  @Mutation(() => UserType)
-  @UseGuards(GqlAuthGuard)
-  async logoutUser(@CurrentUser() user: JwtPayloadUser) {
-    console.log(user)
-    return this.userService.logoutUser(user);
   }
 }

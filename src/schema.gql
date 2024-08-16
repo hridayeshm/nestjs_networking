@@ -9,7 +9,12 @@ type Auth {
 
 input ChangePasswordInput {
   currentPassword: String!
+  logoutFromAllDevices: Boolean!
   newPassword: String!
+}
+
+type ChangePasswordType {
+  message: String!
 }
 
 type CommentNestedInsidePost {
@@ -39,6 +44,11 @@ input CreateEventInput {
 }
 
 input CreateNotificationInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input CreateOtpInput {
   """Example field (placeholder)"""
   exampleField: Int!
 }
@@ -98,11 +108,21 @@ input LoginUserInput {
   password: String!
 }
 
+type LogoutResponse {
+  message: String!
+}
+
+input LogoutUserInput {
+  logoutFromAllDevices: Boolean!
+  refreshToken: String!
+}
+
 type Mutation {
-  changePassword(changePasswordInput: ChangePasswordInput!): UserType!
+  changePassword(changePasswordInput: ChangePasswordInput!): ChangePasswordType!
   createComment(createCommentInput: CreateCommentInput!): PostType!
   createEvent(createEventInput: CreateEventInput!): Event!
   createNotification(createNotificationInput: CreateNotificationInput!): NotificationType!
+  createOtp(createOtpInput: CreateOtpInput!): Otp!
   createPost(createPostInput: CreatePostInput!): PostType!
   createToken(createTokenInput: CreateTokenInput!): Token!
   deleteComment(id: String!): PostType!
@@ -111,13 +131,15 @@ type Mutation {
   generateNewAccessToken(refreshToken: String!): LoginResponse!
   likePost(postID: String!): PostType!
   login(loginUserInput: LoginUserInput!): LoginResponse!
-  logoutUser: UserType!
+  logout(logoutUserInput: LogoutUserInput!): LogoutResponse!
   registerUser(registerUserInput: RegisterUserInput!): UserType!
   removeAuth(id: Int!): Auth!
   removeEvent(id: Int!): Event!
   removeFollow(id: Int!): FollowType!
   removeNotification(id: Int!): NotificationType!
+  removeOtp(id: Int!): Otp!
   removeToken(id: Int!): Token!
+  resendOtp(userId: String!): VerifyOtpResponse!
   respondToRequest(respondToRequestInput: RespondToRequestInput!): NotificationType!
   sendFollowRequest(id: String!): NotificationType!
   unlike(postID: String!): PostType!
@@ -125,15 +147,21 @@ type Mutation {
   updateComment(updateCommentInput: UpdateCommentInput!): PostType!
   updateEvent(updateEventInput: UpdateEventInput!): Event!
   updateNotification(updateNotificationInput: UpdateNotificationInput!): NotificationType!
+  updateOtp(updateOtpInput: UpdateOtpInput!): Otp!
   updatePost(updatePostInput: UpdatePostInput!): PostType!
   updateToken(updateTokenInput: UpdateTokenInput!): Token!
-  verifyUser(emailVerificationToken: String!): UserType!
+  verifyOtp(otp: String!): VerifyOtpResponse!
 }
 
 type NotificationType {
   from: String!
   status: String!
   to: String!
+}
+
+type Otp {
+  """Example field (placeholder)"""
+  exampleField: Int!
 }
 
 type Owner {
@@ -162,6 +190,7 @@ type Query {
   lo(id: Int!): UserType!
   me: UserType!
   notification(id: Int!): NotificationType!
+  otp(id: Int!): Otp!
   showFeed: [PostType!]!
   token(id: Int!): Token!
   user: [UserType!]!
@@ -213,6 +242,12 @@ input UpdateNotificationInput {
   id: Int!
 }
 
+input UpdateOtpInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
+
 input UpdatePostInput {
   description: String
   id: String!
@@ -234,10 +269,14 @@ enum UserStatus {
 type UserType {
   _id: String!
   email: String!
-  emailVerificationToken: String
   followees: [ID!]!
   followers: [ID!]!
   mailVerifiedAt: DateTime
   status: UserStatus!
   username: String!
+}
+
+type VerifyOtpResponse {
+  message: String!
+  otpId: String!
 }

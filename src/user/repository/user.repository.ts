@@ -5,9 +5,12 @@ import { User, UserDocument } from '../schema/user.schema';
 import { UserType } from '../entities/user.entity';
 import { UserStatus } from '../enums/user-status.enum';
 import * as bcrypt from 'bcrypt';
-import { RegisterUserWithUUID } from '../dto/register-user.input';
+import {
+  RegisterUserInput,
+  RegisterUserWithUUID,
+} from '../dto/register-user.input';
 import { Post } from 'src/post/schema/post.schema';
-import { ChangePasswordInput } from '../dto/change-password.input';
+import { ChangePasswordInput } from '../../auth/dto/change-password.input';
 import { TokenRepository } from 'src/token/repository/token.repository';
 import { JwtPayloadUser } from 'src/token/interfaces/jwt-payload.interface';
 
@@ -16,30 +19,22 @@ export class UserRepository {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
     @InjectModel(Post.name) private readonly postModel: Model<Post>,
-    private readonly tokenRepository: TokenRepository,
   ) {}
 
-  async registerUser(
-    registerUserWithUUID: RegisterUserWithUUID,
-  ): Promise<User> {
-    const registeredUser = new this.userModel(registerUserWithUUID);
-    console.log(registeredUser);
+  async registerUser(registerUserInput: RegisterUserInput): Promise<User> {
+    const registeredUser = new this.userModel(registerUserInput);
     await registeredUser.save();
     return registeredUser;
   }
 
-  async verifyUser(emailVerificationToken: string): Promise<User> {
-    const verifiedUser = await this.userModel.findOneAndUpdate(
-      { emailVerificationToken },
+  async verifyUser(userId: string): Promise<void> {
+    await this.userModel.findOneAndUpdate(
+      { _id: userId },
       {
         mailVerifiedAt: new Date(),
-        emailVerificationToken: null,
         status: UserStatus.Active,
       },
-      { new: true },
     );
-
-    return verifiedUser;
   }
 
   async verifyEmail(email: string): Promise<User> {
@@ -73,29 +68,12 @@ export class UserRepository {
     return this.postModel.find({ 'owner.id': { $in: foundUser.followees } });
   }
 
-  async changePassword(user: User, changePasswordInput: ChangePasswordInput) {
+  async changePassword(user: User, newPassword: string) {
     const foundUser = await this.userModel.findOne({ _id: user.id });
     if (!this.verifyPassword) {
       throw new BadRequestException('Incorrect current password');
     }
-    foundUser.password = changePasswordInput.newPassword;
-    await foundUser.save();
-    console.log(user);
-    return foundUser;
-  }
-
-  async logoutUser(user: JwtPayloadUser) {
-    //khas ma refresh token pathaune logout garda
-    this.tokenRepository.deleteToken(user); // token deletion not working
-
-    return this.userModel.findOneAndUpdate(
-      { _id: user.id },
-      {
-        status: UserStatus.Inactive,
-      },
-      {
-        new: true,
-      },
-    );
+    foundUser.password = newPassword; 
+    return await foundUser.save();
   }
 }

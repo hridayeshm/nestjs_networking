@@ -11,6 +11,8 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { TokenModule } from 'src/token/token.module';
 import { RefreshToken, RefreshTokenSchema } from 'src/token/schema/token.schema';
+import { OtpModule } from 'src/otp/otp.module';
+import { EmailModule } from 'src/email/email.module';
 
 @Module({
   imports: [
@@ -31,7 +33,9 @@ import { RefreshToken, RefreshTokenSchema } from 'src/token/schema/token.schema'
     MongooseModule.forFeature([{ name: RefreshToken.name, schema: RefreshTokenSchema }]),
     UserModule,
     PassportModule,
-    TokenModule
+    TokenModule,
+    OtpModule,
+    EmailModule
   ],
   providers: [AuthResolver, AuthService, AuthRepository, JwtStrategy],
   exports: [AuthService]

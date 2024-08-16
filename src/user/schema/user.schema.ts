@@ -21,9 +21,6 @@ export class User extends Document {
   @Prop({ type: String, required: true, unique: true})
   password: string
 
-  @Prop({ type: String})
-  emailVerificationToken?: string
-
   @Prop({ type: Date})
   mailVerifiedAt?: Date
 

@@ -5,7 +5,7 @@ import { Document } from 'mongoose';
 @Schema({ timestamps: true })
 export class RefreshToken extends Document {
   @Prop({ type: String})
-  token: string;
+  uuid: string;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' })
   userId: string;

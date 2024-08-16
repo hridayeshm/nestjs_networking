@@ -1,4 +1,6 @@
 import {Transporter, createTransport} from 'nodemailer'
+import { Otp } from 'src/otp/schema/otp.schema';
+import { User } from 'src/user/schema/user.schema';
 
 export class NodeMailerService{
    public transporter: Transporter
@@ -13,12 +15,12 @@ export class NodeMailerService{
      });
    }
 
-   async sendVerficationMail(values: any){
+   async sendVerficationMail(registeredUser: User, otp: string){
      const mailOptions = {
        from: 'hridayesh@gmail.com',
-       to: values.email, 
+       to: registeredUser.email, 
        subject: 'Verification Token',
-       text: `Your Verification token: ${values.emailVerificationToken}`
+       text: `Your Verification token: ${otp}`
      };
      await this.transporter.sendMail(mailOptions);
    }

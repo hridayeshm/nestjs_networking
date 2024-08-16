@@ -15,6 +15,8 @@ import { EventModule } from './event/event.module';
 import { TokenModule } from './token/token.module';
 import { AuthModule } from './auth/auth.module';
 import { NotificationModule } from './notification/notification.module';
+import { OtpModule } from './otp/otp.module';
+import { EmailModule } from './email/email.module';
 
 
 @Module({
@@ -45,7 +47,9 @@ import { NotificationModule } from './notification/notification.module';
     EventModule,
     TokenModule,
     AuthModule,
-    NotificationModule,    
+    NotificationModule,
+    OtpModule,
+    EmailModule,    
   ],
 
   providers: [AppService],

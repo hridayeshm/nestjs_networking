@@ -12,9 +12,6 @@ export class UserType {
   @Field(() => String)
   email: string;
 
-  @Field(() => String, {nullable: true})
-  emailVerificationToken?: String
-
   @Field(() => Date ,{nullable: true})
   mailVerifiedAt?: Date
 

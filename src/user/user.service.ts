@@ -1,41 +1,36 @@
-import { Injectable } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
+import { Inject, Injectable } from '@nestjs/common';
 import { UserRepository } from './repository/user.repository';
 import { User } from './schema/user.schema';
 import { UpdateUserInput } from './dto/update-user.input';
-import { UserType } from './entities/user.entity';
 import { RegisterUserInput } from './dto/register-user.input';
 import { NodeMailerService } from 'src/service/nodemailer.service';
-import mongoose from 'mongoose';
-import { ChangePasswordInput } from './dto/change-password.input';
-import { JwtPayloadUser } from 'src/token/interfaces/jwt-payload.interface';
+import { ChangePasswordInput } from '../auth/dto/change-password.input';
+import { OtpRepository } from 'src/otp/repository/otp.repository';
+import { Otp } from 'src/otp/schema/otp.schema';
+import { TokenRepository } from 'src/token/repository/token.repository';
+import { generateOtp } from 'src/utils/generate.otp';
+import { Transporter } from 'nodemailer';
+import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly otpRepository: OtpRepository,
+    private readonly emailService: EmailService
+  ) {}
 
   async registerUser(registerUserInput: RegisterUserInput): Promise<User> {
-    const registerUserWithUUID = {
-      ...registerUserInput,
-      emailVerificationToken: uuidv4(),
-    };
     const registeredUser: User =
-      await this.userRepository.registerUser(registerUserWithUUID);
-    const nodeMailerService = new NodeMailerService();
-    nodeMailerService.sendVerficationMail(registeredUser);
+      await this.userRepository.registerUser(registerUserInput);
+    const otp = generateOtp();
+    const otpDoc: Otp = await this.otpRepository.createOtp(registeredUser, otp);
+    this.emailService.sendMail({user: registeredUser, subject: 'User Verification Mail', token: otp})
     return registeredUser;
   }
 
   async showFeed(user: User) {
     return this.userRepository.showFeed(user);
-  }
-
-  async changePassword(user: User, changePasswordInput: ChangePasswordInput) {
-    return this.userRepository.changePassword(user, changePasswordInput)
-  }
-
-  async logoutUser(user: JwtPayloadUser) {
-    return this.userRepository.logoutUser(user);
   }
 
   findAll() {

@@ -10,29 +10,33 @@ export class TokenRepository {
     private readonly tokenModel: Model<RefreshToken>,
   ) {}
 
-  async get(oldRefreshToken: string) {
-    return this.tokenModel.findOne({ token: oldRefreshToken });
+  async find(decoded_refresh_token) {
+    return this.tokenModel.findOne({ uuid: decoded_refresh_token.uuid });
   }
 
-  async createToken(token: string, userId: string) {
+  async createToken(jwt_refresh_payload) {
     this.tokenModel.create({
-      token,
-      userId,
+      uuid: jwt_refresh_payload.uuid,
+      userId: jwt_refresh_payload.sub,
       expires: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
     });
   }
 
-  async updateToken(oldRefreshToken: string, newRefreshToken: string) {
+  async updateToken(decoded_refresh_token, jwt_refresh_payload) {
     this.tokenModel.findOneAndUpdate(
-      { token: oldRefreshToken },
+      { uuid: decoded_refresh_token.uuid },
       {
-        token: newRefreshToken,
-        expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        uuid: decoded_refresh_token.uuid,
+        expires: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
       },
     );
   }
 
-  async deleteToken(user) {
-    await this.tokenModel.deleteOne({ uuid: user.uuid });
+  async deleteUserAllTokens(userId: string) {
+    this.tokenModel.deleteMany({userId});
+  }
+
+  async deleteOne(uuid: string) {
+    this.tokenModel.findOneAndDelete({uuid});
   }
 }
